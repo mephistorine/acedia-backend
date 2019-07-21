@@ -110,3 +110,5 @@ modules.xml
 # End of https://www.gitignore.io/api/web,webstorm+all,visualstudiocode
 
 dbdata
+
+node_modules/
