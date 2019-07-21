@@ -1,7 +1,8 @@
 import { IsArray, IsEmail, IsEnum, IsString, IsUrl, MinLength, IsEmpty } from 'class-validator'
 import { getCurrentTime } from '../../shared/util'
+import { ObjectId } from 'bson'
 
-export enum Role {
+export enum UserRole {
   admin = 'ADMIN'
 }
 
@@ -18,8 +19,15 @@ export class Social {
   url: string
 }
 
-export class UserDto {
+export interface WithObjectId {
+  _id: ObjectId
+}
 
+export interface WithStringifyObjectId {
+  _id: string
+}
+
+export class UserDto {
   @IsString()
   name: string
 
@@ -29,8 +37,8 @@ export class UserDto {
   @IsString()
   bio: string
 
-  @IsEnum(Role)
-  role: Role
+  @IsEnum(UserRole)
+  role: UserRole
 
   @IsString()
   @MinLength(2)
@@ -45,6 +53,7 @@ export class UserDto {
   email: string
 
   @IsString()
+  @MinLength(6)
   password: string
 
   @IsString()
@@ -59,3 +68,6 @@ export class UserDto {
   @IsEmpty()
   updatedAt: number
 }
+
+export type UserDtoObjectedId = UserDto & WithObjectId
+export type UserDtoStringifyId = UserDto & WithStringifyObjectId

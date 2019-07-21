@@ -1,6 +1,7 @@
 import { Typegoose, prop } from 'typegoose'
-import { Role } from '../models'
+import { UserRole } from '../models'
 import { getCurrentTime } from '../../shared/util'
+import { ObjectId } from 'bson'
 
 class Social {
 
@@ -25,10 +26,10 @@ export class User extends Typegoose {
   bio: string
 
   @prop({
-    enum: Role,
+    enum: UserRole,
     required: true
   })
-  role: Role
+  role: UserRole
 
   @prop({
     unique: true,

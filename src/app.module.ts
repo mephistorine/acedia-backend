@@ -3,6 +3,7 @@ import { AppController } from './app.controller'
 import { UserModule } from './user/user.module'
 import { TypegooseModule } from 'nestjs-typegoose'
 import { Env } from '../environments/env'
+import { AuthModule } from './auth/auth.module'
 
 const dbConfig = Env.get('database')
 
@@ -12,7 +13,8 @@ const dbConfig = Env.get('database')
     TypegooseModule.forRoot(`mongodb://${dbConfig.host}:${dbConfig.port.toString()}/${dbConfig.name}`, {
       useNewUrlParser: true,
       useFindAndModify: true
-    })
+    }),
+    AuthModule
   ],
   controllers: [ AppController ]
 })

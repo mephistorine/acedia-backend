@@ -3,7 +3,6 @@ import { UserService } from '../services/user/user.service'
 import { UserDto } from '../models'
 import { ValidationPipe } from '../../shared/pipes'
 
-
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {

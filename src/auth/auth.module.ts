@@ -5,10 +5,8 @@ import { PassportModule } from '@nestjs/passport'
 import { AuthController } from './controllers/auth/auth.controller'
 import { AuthService } from './services/auth/auth.service'
 
-// import { AuthorModule } from '../author/author.module'
 import { JwtStrategy } from './services/auth/jwt.strategy'
-
-export const secretOrPrivateKey = '!Ld9SiGzON*pIwLtfp0J'
+import { UserModule } from '../user/user.module'
 
 @Module({
   controllers: [ AuthController ],
@@ -16,12 +14,12 @@ export const secretOrPrivateKey = '!Ld9SiGzON*pIwLtfp0J'
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secretOrPrivateKey: '!Ld9SiGzON*pIwLtfp0J',
+      secret: '!Ld9SiGzON*pIwLtfp0J',
       signOptions: {
         expiresIn: '1d'
       }
     }),
-    AuthorModule
+    UserModule
   ],
   exports: [ PassportModule.register({ defaultStrategy: 'jwt' }) ]
 })

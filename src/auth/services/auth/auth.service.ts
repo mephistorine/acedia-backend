@@ -1,67 +1,31 @@
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 
-// import { AuthorService } from '../../../author/services/author/author.service'
-import { JwtPayloadDTO } from 'src/auth/models/auth'
-import { isEmptyObject } from 'src/shared/util'
+import { UserService } from '../../../user/services/user/user.service'
+import { forkJoin, of } from 'rxjs'
+import { catchError, map, switchMap } from 'rxjs/operators'
+import { UserDtoObjectedId } from '../../../user/models'
+import { JwtPayload } from '../../models'
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService, private authorS: AuthorService) {}
+  constructor(private jwtService: JwtService, private userService: UserService) {}
 
-  public async sign(payload: JwtPayloadDTO): Promise<SignData> {
-    const author = await this.validateAuthor(payload.nick)
-
-    if (isEmptyObject(author)) {
-      return {
-        success: false,
-        error: {
-          code: 400,
-          message: 'This author does not exist'
-        }
-      }
-    }
-
-    const isRoleMatched = await this.authorS.checkRole(author, payload.role)
-
-    if (!isRoleMatched) {
-      return {
-        success: false,
-        error: {
-          code: 400,
-          message: 'Role does not match'
-        }
-      }
-    }
-
-    const isPassMatched = await this.authorS.checkPassword(author, payload.password)
-
-    if (!isPassMatched) {
-      return {
-        success: false,
-        error: {
-          code: 400,
-          message: 'Password does not match'
-        }
-      }
-    }
-
-    return {
-      success: true,
-      data: { accessToken: this.jwtService.sign(payload) }
-    }
+  public sign(payload) {
+    return of(payload).pipe(
+      switchMap((payload) => this.userService.getUserByLogin(payload.login)),
+      map((user: UserDtoObjectedId) => ({
+        uid: user._id.toHexString(),
+        token: this.jwtService.sign({ role: user.role, uid: user._id.toHexString() })
+      })),
+      catchError(error => of(error))
+    )
   }
 
-  public async validateAuthor(nick: string) {
-    return await this.authorS.getByNick(nick)
-  }
-}
-
-interface SignData {
-  success: boolean
-  data?: any
-  error?: {
-    code?: number
-    message?: string
+  public validate({ uid, role }: JwtPayload) {
+    return forkJoin({
+      isExistUser: this.userService.isExistUser({ _id: uid }),
+      isRoleMatch: this.userService.isRoleMatch(uid, role)
+    })
   }
 }
