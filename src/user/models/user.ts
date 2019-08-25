@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsEnum, IsString, IsUrl, MinLength, IsEmpty } from 'class-validator'
+import { IsArray, IsEmail, IsEnum, IsString, IsUrl, MinLength, IsEmpty, IsOptional } from 'class-validator'
 import { getCurrentTime } from '../../shared/util'
 import { ObjectId } from 'bson'
 
@@ -19,14 +19,6 @@ export class Social {
   url: string
 }
 
-export interface WithObjectId {
-  _id: ObjectId
-}
-
-export interface WithStringifyObjectId {
-  _id: string
-}
-
 export class UserDto {
   @IsString()
   name: string
@@ -34,6 +26,7 @@ export class UserDto {
   @IsString()
   lastName: string
 
+  @IsOptional()
   @IsString()
   bio: string
 
@@ -44,6 +37,7 @@ export class UserDto {
   @MinLength(2)
   login: string
 
+  @IsOptional()
   @IsString()
   @IsUrl()
   website?: string
@@ -56,6 +50,7 @@ export class UserDto {
   @MinLength(6)
   password: string
 
+  @IsOptional()
   @IsString()
   location?: string
 
@@ -68,6 +63,3 @@ export class UserDto {
   @IsEmpty()
   updatedAt: number
 }
-
-export type UserDtoObjectedId = UserDto & WithObjectId
-export type UserDtoStringifyId = UserDto & WithStringifyObjectId

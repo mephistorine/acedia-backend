@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { UserModule } from './user/user.module'
 import { TypegooseModule } from 'nestjs-typegoose'
+
 import { Env } from '../environments/env'
-import { AuthModule } from './auth/auth.module'
+import { UserModule, AuthModule, ArticlesModule } from './modules'
 
 const dbConfig = Env.get('database')
 
@@ -12,10 +11,11 @@ const dbConfig = Env.get('database')
     UserModule,
     TypegooseModule.forRoot(`mongodb://${dbConfig.host}:${dbConfig.port.toString()}/${dbConfig.name}`, {
       useNewUrlParser: true,
-      useFindAndModify: true
+      useFindAndModify: false,
+      useCreateIndex: true
     }),
-    AuthModule
-  ],
-  controllers: [ AppController ]
+    AuthModule,
+    ArticlesModule
+  ]
 })
 export class AppModule {}

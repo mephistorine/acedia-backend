@@ -8,8 +8,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 async function bootstrap() {
   const serverEnv = Env.get('server')
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true })
-
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  app.enableCors()
   app.use(morgan('dev'))
 
   const options = new DocumentBuilder()

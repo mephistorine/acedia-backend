@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { ObjectId } from 'bson'
 
 import { UserService } from '../../../user/services/user/user.service'
 import { forkJoin, of } from 'rxjs'
 import { catchError, map, switchMap } from 'rxjs/operators'
-import { UserDtoObjectedId } from '../../../user/models'
+import { UserDto } from '../../../user/models'
 import { JwtPayload } from '../../models'
 
 @Injectable()
@@ -14,7 +15,7 @@ export class AuthService {
   public sign(payload) {
     return of(payload).pipe(
       switchMap((payload) => this.userService.getUserByLogin(payload.login)),
-      map((user: UserDtoObjectedId) => ({
+      map((user: UserDto & { _id: ObjectId }) => ({
         uid: user._id.toHexString(),
         token: this.jwtService.sign({ role: user.role, uid: user._id.toHexString() })
       })),
